@@ -1,0 +1,60 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "amount": 100000,
+      "date": "2023-01-01",
+      "description": "Salary",
+      "category": "Salary"
+    },
+    {
+      "id": "2",
+      "amount": -200,
+      "date": "2023-02-01",
+      "description": "Loan Repayment",
+      "category": "Loan"
+    },
+    {
+      "id": "3",
+      "amount": 1000,
+      "date": "2023-03-01",
+      "description": "Rent payment",
+      "category": "Rent"
+    },
+    {
+      "id": "0.6336893082651274",
+      "date": "2024-08-06T07:20:32.573Z",
+      "description": "Breakfast",
+      "amount": -10,
+      "category": "Food"
+    },
+    {
+      "id": "0.6596406309510732",
+      "date": "2024-08-06T07:22:10.734Z",
+      "description": "Dinner",
+      "amount": -15,
+      "category": "Food"
+    },
+    {
+      "id": "0.480120151404422",
+      "date": "2024-08-06T07:22:44.871Z",
+      "description": "Supper",
+      "amount": -10,
+      "category": "Food"
+    },
+    {
+      "id": "0.9852436853664279",
+      "date": "2024-08-07T06:37:38.927Z",
+      "description": "Lunch",
+      "amount": -15,
+      "category": "Food"
+    },
+    {
+      "id": "0.4482388296657265",
+      "date": "2024-08-07T07:44:17.295Z",
+      "description": "Wash Car",
+      "amount": -5,
+      "category": "Car"
+    }
+  ]
+}
