@@ -1,12 +1,14 @@
 import { TitleCasePipe } from '@angular/common';
-import { Component, inject, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TransactionService } from '../services/transaction.service';
 import { Transaction } from '../types/transaction.type';
+import { Store } from "@ngrx/store";
+import { TransactionsActions } from "../store/transaction.actions";
+import { TransactionState } from "../store/transaction.feature";
 
 @Component({
   selector: 'app-add-transaction',
@@ -63,11 +65,13 @@ import { Transaction } from '../types/transaction.type';
   ],
 })
 export class AddTransactionComponent {
-  private readonly transactionService = inject(TransactionService);
   public readonly dialogData = inject(MAT_DIALOG_DATA) as {
     type: 'expense' | 'income';
   };
-  added = output<void>()
+  private readonly dialogRef = inject(MatDialogRef<AddTransactionComponent>);
+
+  private readonly store: Store<{ transactions: TransactionState }> = inject(Store);
+
   transaction: Transaction = {
     id: '',
     date: new Date(),
@@ -75,8 +79,9 @@ export class AddTransactionComponent {
     amount: 0,
     category: '',
   };
+
   onSubmit() {
-    this.transactionService.addTransaction({
+    const transaction: Transaction = {
       id: Math.random().toString(),
       date: this.transaction.date,
       description: this.transaction.description,
@@ -85,8 +90,8 @@ export class AddTransactionComponent {
           ? -this.transaction.amount
           : this.transaction.amount,
       category: this.transaction.category,
-    }).subscribe(
-        () => this.added.emit(),
-    );
+    };
+    this.store.dispatch(TransactionsActions.addTransaction({ transaction }));
+    this.dialogRef.close();
   }
 }

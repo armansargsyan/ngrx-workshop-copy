@@ -1,12 +1,17 @@
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { TransactionService } from '../services/transaction.service';
-import { Transaction } from '../types/transaction.type';
 import { AddTransactionComponent } from './add-transaction.component';
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs";
+import { TransactionsActions } from "../store/transaction.actions";
+import { transactionFeature, TransactionState } from "../store/transaction.feature";
+import { Transaction } from "../types/transaction.type";
+import { MatIcon } from "@angular/material/icon";
+
 
 @Component({
   selector: 'app-transactions',
@@ -18,7 +23,7 @@ import { AddTransactionComponent } from './add-transaction.component';
       <button mat-raised-button (click)="openDialog('income')">
         Add Income
       </button>
-      <table mat-table [dataSource]="transactions" class="mat-elevation-z8">
+      <table mat-table [dataSource]="(transactions$ | async) || []" class="mat-elevation-z8">
         <!-- Decription Column -->
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Description</th>
@@ -31,7 +36,7 @@ import { AddTransactionComponent } from './add-transaction.component';
         <ng-container matColumnDef="amount">
           <th mat-header-cell *matHeaderCellDef>Amount</th>
           <td mat-cell *matCellDef="let transaction">
-            {{ transaction.amount }}
+            {{ transaction.amount | currency }}
           </td>
         </ng-container>
 
@@ -51,6 +56,16 @@ import { AddTransactionComponent } from './add-transaction.component';
           </td>
         </ng-container>
 
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let transaction">
+            <button mat-icon-button (click)="delete(transaction.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
@@ -63,32 +78,29 @@ import { AddTransactionComponent } from './add-transaction.component';
     }
   `,
   standalone: true,
-  imports: [MatTableModule, DatePipe, MatCardModule, MatButtonModule],
+  imports: [MatTableModule, DatePipe, MatCardModule, MatButtonModule, AsyncPipe, CurrencyPipe, MatIcon],
 })
 export class TransactionsComponent {
-  private readonly transactionService = inject(TransactionService);
   private readonly dialog = inject(MatDialog);
-  transactions: Transaction[] = [];
-  displayedColumns: string[] = ['description', 'amount', 'date', 'category'];
+  private readonly store: Store<{ transactions: TransactionState }> = inject(Store);
+
+  transactions$: Observable<Transaction[]> = this.store.select(transactionFeature.selectTransactions);
+
+  displayedColumns: string[] = ['description', 'amount', 'date', 'category', 'actions'];
 
   constructor() {
-    this.transactionService
-      .loadTransactions()
-      .subscribe((transactions) => (this.transactions = transactions));
+    this.store.dispatch(TransactionsActions.loadTransactions());
   }
 
   openDialog(type: 'expense' | 'income') {
-    const dialogRef = this.dialog.open(AddTransactionComponent, {
+    this.dialog.open(AddTransactionComponent, {
       data: {
         type: type,
       },
     });
+  }
 
-    dialogRef.componentInstance.added.subscribe(() => {
-      this.transactionService
-        .loadTransactions()
-        .subscribe((transactions) => (this.transactions = transactions));
-      dialogRef.close();
-    });
+  delete(id: string): void {
+    this.store.dispatch(TransactionsActions.deleteTransaction({ id }));
   }
 }

@@ -13,4 +13,7 @@ export class TransactionService {
   addTransaction(transaction: Transaction) {
     return this.http.post<Transaction>('http://localhost:3000/transactions', transaction);
   }
+  deleteTransaction(id: string) {
+    return this.http.delete<Transaction>(`http://localhost:3000/transactions/${id}`);
+  }
 }
