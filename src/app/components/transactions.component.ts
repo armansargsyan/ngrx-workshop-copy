@@ -8,7 +8,7 @@ import { AddTransactionComponent } from './add-transaction.component';
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 import { TransactionsActions } from "../store/transaction.actions";
-import { transactionFeature, TransactionState } from "../store/transaction.feature";
+import { transactionFeature } from "../store/transaction.feature";
 import { Transaction } from "../types/transaction.type";
 import { MatIcon } from "@angular/material/icon";
 
@@ -82,7 +82,7 @@ import { MatIcon } from "@angular/material/icon";
 })
 export class TransactionsComponent {
   private readonly dialog = inject(MatDialog);
-  private readonly store: Store<{ transactions: TransactionState }> = inject(Store);
+  private readonly store = inject(Store);
 
   transactions$: Observable<Transaction[]> = this.store.select(transactionFeature.selectTransactions);
 

@@ -5,7 +5,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import { transactionFeature } from "./store/transaction.feature";
-import { provideStore } from "@ngrx/store";
+import { provideState, provideStore } from "@ngrx/store";
 import { provideEffects } from "@ngrx/effects";
 import * as effects from "./store/transaction.effects";
 
@@ -15,7 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
-    provideStore({ transactions: transactionFeature.reducer }),
+    provideStore(),
+    provideState(transactionFeature),
     provideEffects(effects)
   ],
 };

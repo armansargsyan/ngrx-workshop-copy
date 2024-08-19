@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { Transaction } from '../types/transaction.type';
 import { Store } from "@ngrx/store";
 import { TransactionsActions } from "../store/transaction.actions";
-import { TransactionState } from "../store/transaction.feature";
 
 @Component({
   selector: 'app-add-transaction',
@@ -70,7 +69,7 @@ export class AddTransactionComponent {
   };
   private readonly dialogRef = inject(MatDialogRef<AddTransactionComponent>);
 
-  private readonly store: Store<{ transactions: TransactionState }> = inject(Store);
+  private readonly store = inject(Store);
 
   transaction: Transaction = {
     id: '',

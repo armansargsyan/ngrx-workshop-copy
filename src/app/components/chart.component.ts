@@ -2,7 +2,7 @@ import { Component, effect, ElementRef, inject, Signal, viewChild, } from '@angu
 import { Transaction } from '../types/transaction.type';
 import Chart from 'chart.js/auto'
 import { Store } from "@ngrx/store";
-import { transactionFeature, TransactionState } from "../store/transaction.feature";
+import { transactionFeature } from "../store/transaction.feature";
 
 
 @Component({
@@ -20,7 +20,7 @@ import { transactionFeature, TransactionState } from "../store/transaction.featu
 export class TransactionPieChartComponent {
   chartEl = viewChild<ElementRef<HTMLCanvasElement>>('transactionPieChart');
   currentChart?: Chart<'pie'>;
-  private readonly store: Store<TransactionState> = inject(Store);
+  private readonly store = inject(Store);
   transactions: Signal<Transaction[]> = this.store.selectSignal(transactionFeature.selectTransactions);
 
   constructor() {

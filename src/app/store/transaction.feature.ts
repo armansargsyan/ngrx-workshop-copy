@@ -1,4 +1,4 @@
-import { createFeature, createReducer, on } from "@ngrx/store";
+import { createFeature, createReducer, createSelector, on } from "@ngrx/store";
 import { Transaction } from "../types/transaction.type";
 import { TransactionsActions } from "./transaction.actions";
 
@@ -23,8 +23,7 @@ export const transactionFeature = createFeature({
         ...state,
         loading: true,
         error: null,
-      })
-    ),
+      })),
     on(TransactionsActions.loadTransactionsSuccess, (state: TransactionState, { transactions }: { transactions: Transaction[] }) => ({
       ...state,
       transactions,
@@ -48,5 +47,14 @@ export const transactionFeature = createFeature({
       loading: false,
       error
     })),
-  )
+  ),
+  extraSelectors: ({selectTransactions}) => ({
+    selectTransactionsTotalAmount: createSelector(
+      selectTransactions,
+      (transactions) => transactions.reduce(
+        (sum: number, item: Transaction) => item.amount + sum,
+        0
+      )
+    ),
+  })
 });
